@@ -1,0 +1,15 @@
+name: Deploy to Azure VM
+on: [push]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install SSH key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Deploy via SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no devops@20.9.242.15 \
+          "cd ~/fintrack-devops && git pull && docker-compose down && docker-compose up -d --build"
